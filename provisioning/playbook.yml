@@ -36,5 +36,8 @@
     - name: install mysql client
       apt: name=mysql-client state=present
 
+    - name: add mysql client config
+      template: src=templates/my.cnf dest=/etc/my.cnf owner=root group=root mode=644
+
     - name: install vim
       apt: name=vim state=present

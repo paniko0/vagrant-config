@@ -15,6 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network "private_network", ip: "192.168.50.4"
 
+  config.ssh.forward_agent = true
+
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
   end
@@ -22,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "docker" do |d|
     d.pull_images "ubuntu"
 
-    d.run "mysql", image: "mysql", args: "-e MYSQL_ROOT_PASSWORD=root -p 3360:3306"
+    d.run "mysql", image: "mysql", args: "-e MYSQL_ROOT_PASSWORD=root -p 3306:3306"
     d.run "mongodb", image: "dockerfile/mongodb", args: "-p 27017:27017 -p 28017:28017"
     d.run "rabbitmq", image: "tutum/rabbitmq", args: "-p 5672:5672 -p 15672:15672 -e RABBITMQ_PASS=\"admin\""
     d.run "redis", image: "dockerfile/redis", args: "-p 6379:6379"
@@ -30,11 +32,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
   config.vm.synced_folder "/Users/rodrigosaito/dev", "/home/vagrant/dev", type: "nfs"
+  config.vm.synced_folder "/Users/rodrigosaito/moip", "/home/vagrant/moip", type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
     # Use VBoxManage to customize the VM. For example to change memory:
     vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
+
+  config.vm.network "forwarded_port", guest: 3306, host: 3306
+  config.vm.network "forwarded_port", guest: 5672, host: 5672
+  config.vm.network "forwarded_port", guest: 6379, host: 6379
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 9090, host: 9090
+  config.vm.network "forwarded_port", guest: 15672, host: 15672
+  config.vm.network "forwarded_port", guest: 27017, host: 27017
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
