@@ -1,0 +1,40 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: install rvm
+      shell: curl -L https://get.rvm.io | bash -s stable creates=/home/vagrant/.rvm
+      sudo: no
+
+    - name: add java repo keys
+      apt_key: keyserver=keyserver.ubuntu.com id=EEA14886 state=present
+
+    - name: add java repo
+      apt_repository: repo='deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main' state=present
+
+    - name: add java sources repo
+      apt_repository: repo='deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main' state=present
+
+    - name: accept java license
+      shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+
+    - name: install java 7
+      apt: name=oracle-java8-installer update_cache=yes state=present
+
+    - name: download maven
+      get_url: url=http://ftp.unicamp.br/pub/apache/maven/maven-3/3.2.1/binaries/apache-maven-3.2.1-bin.tar.gz dest=/opt/
+
+    - name: unarchive maven
+      unarchive: src=/opt/apache-maven-3.2.1-bin.tar.gz dest=/opt/ copy=no
+
+    - name: symlink maven dir
+      file: src=/opt/apache-maven-3.2.1 dest=/opt/maven state=link
+
+    - name: symlink maven bin
+      file: src=/opt/maven/bin/mvn dest=/usr/bin/mvn state=link
+
+    - name: install mysql client
+      apt: name=mysql-client state=present
+
+    - name: install vim
+      apt: name=vim state=present
