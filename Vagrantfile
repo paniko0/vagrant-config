@@ -33,6 +33,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
   config.vm.synced_folder "/Users/rodrigosaito/dev", "/home/vagrant/dev", type: "nfs"
   config.vm.synced_folder "/Users/rodrigosaito/moip", "/home/vagrant/moip", type: "nfs"
+  config.vm.synced_folder "/Users/rodrigosaito/.m2", "/home/vagrant/.m2", type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
     # Use VBoxManage to customize the VM. For example to change memory:
