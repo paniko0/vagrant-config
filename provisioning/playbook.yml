@@ -6,18 +6,6 @@
       shell: curl -L https://get.rvm.io | bash -s stable creates=/home/vagrant/.rvm
       sudo: no
 
-    - name: install vim
-      apt: name=vim state=present
-
-    - name: install tmux
-      apt: name=tmux state=present
-
-    - name: install pip
-      apt: name=python-pip state=present
-
-    - name: install unzip
-      apt: name=unzip state=present
-
     - name: add java repo keys
       apt_key: keyserver=keyserver.ubuntu.com id=EEA14886 state=present
 
@@ -33,6 +21,17 @@
     - name: install java 7
       apt: name=oracle-java8-installer update_cache=yes state=present
 
+    - name: install vim
+      apt: name=vim state=present
+
+    - name: install tmux
+      apt: name=tmux state=present
+
+    - name: install pip
+      apt: name=python-pip state=present
+
+    - name: install unzip
+      apt: name=unzip state=present
     - name: download maven
       get_url: url=http://ftp.unicamp.br/pub/apache/maven/maven-3/3.2.1/binaries/apache-maven-3.2.1-bin.tar.gz dest=/opt/
 
@@ -65,3 +64,18 @@
 
     - name: symlink eb tool
       file: src=/opt/eb/eb/linux/python2.7/eb dest=/usr/bin/eb state=link
+
+    - name: install phantomjs dependencies
+      apt: name=libfontconfig state=present
+
+    - name: download phantomjs
+      get_url: url=https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 dest=/opt/ sha256sum=473b19f7eacc922bc1de21b71d907f182251dd4784cb982b9028899e91dcb01a
+
+    - name: unarchive phantomjs
+      unarchive: src=/opt/phantomjs-1.9.7-linux-x86_64.tar.bz2 dest=/opt/ copy=no
+
+    - name: symlink phantomjs dir
+      file: src=/opt/phantomjs-1.9.7-linux-x86_64 dest=/opt/phantomjs state=link
+
+    - name: symlink phantomjs
+      file: src=/opt/phantomjs/bin/phantomjs dest=/usr/bin/phantomjs state=link
