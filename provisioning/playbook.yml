@@ -6,6 +6,18 @@
       shell: curl -L https://get.rvm.io | bash -s stable creates=/home/vagrant/.rvm
       sudo: no
 
+    - name: install vim
+      apt: name=vim state=present
+
+    - name: install tmux
+      apt: name=tmux state=present
+
+    - name: install pip
+      apt: name=python-pip state=present
+
+    - name: install unzip
+      apt: name=unzip state=present
+
     - name: add java repo keys
       apt_key: keyserver=keyserver.ubuntu.com id=EEA14886 state=present
 
@@ -39,5 +51,17 @@
     - name: add mysql client config
       template: src=templates/my.cnf dest=/etc/my.cnf owner=root group=root mode=644
 
-    - name: install vim
-      apt: name=vim state=present
+    - name: install aws tools
+      pip: name=awscli state=present
+
+    - name: download eb tool
+      get_url: url=https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-2.6.3.zip dest=/opt/
+
+    - name: unarchive eb tool
+      unarchive: src=/opt/AWS-ElasticBeanstalk-CLI-2.6.3.zip dest=/opt/ copy=no creates=/opt/AWS-ElasticBeanstalk-CLI-2.6.3
+
+    - name: symlink eb dir
+      file: src=/opt/AWS-ElasticBeanstalk-CLI-2.6.3 dest=/opt/eb state=link
+
+    - name: symlink eb tool
+      file: src=/opt/eb/eb/linux/python2.7/eb dest=/usr/bin/eb state=link
