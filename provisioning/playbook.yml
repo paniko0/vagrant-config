@@ -18,7 +18,7 @@
     - name: accept java license
       debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
 
-    - name: install java 7
+    - name: install java 8
       apt: name=oracle-java8-installer update_cache=yes state=present
 
     - name: install vim
@@ -79,3 +79,6 @@
 
     - name: symlink phantomjs
       file: src=/opt/phantomjs/bin/phantomjs dest=/usr/bin/phantomjs state=link
+
+    - name: creates moip default log dest
+      file: state=directory recurse=yes path=/moip/logs
