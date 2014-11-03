@@ -32,6 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
   config.vm.synced_folder "/Users/danillosouza/moip", "/home/vagrant/moip", type: "nfs"
+  config.vm.synced_folder "/Users/danillosouza/projects", "/home/vagrant/projects", type: "nfs"
   config.vm.synced_folder "/Users/danillosouza/.m2", "/home/vagrant/.m2", type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
@@ -46,6 +47,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 9090, host: 9090
   config.vm.network "forwarded_port", guest: 15672, host: 15672
   config.vm.network "forwarded_port", guest: 27017, host: 27017
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
+  config.vm.network "forwarded_port", guest: 4567, host: 4567
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

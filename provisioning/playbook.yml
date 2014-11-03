@@ -3,8 +3,7 @@
   sudo: yes
   tasks:
     - name: install rvm
-      shell: curl -L https://get.rvm.io | bash -s stable creates=/home/vagrant/.rvm
-      sudo: no
+      shell: curl -L https://get.rvm.io | bash -s stable --ruby creates=/home/vagrant/.rvm
 
     - name: add java repo keys
       apt_key: keyserver=keyserver.ubuntu.com id=EEA14886 state=present
@@ -23,6 +22,9 @@
 
     - name: install vim
       apt: name=vim state=present
+
+    - name: install npm
+      apt: name=npm state=present
 
     - name: install tmux
       apt: name=tmux state=present
@@ -80,5 +82,3 @@
     - name: symlink phantomjs
       file: src=/opt/phantomjs/bin/phantomjs dest=/usr/bin/phantomjs state=link
 
-    - name: creates moip default log dest
-      file: state=directory recurse=yes path=/moip/logs
