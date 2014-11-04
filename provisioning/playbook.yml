@@ -2,8 +2,12 @@
 - hosts: all
   sudo: yes
   tasks:
-    - name: install rvm
-      shell: curl -L https://get.rvm.io | bash -s stable --ruby creates=/home/vagrant/.rvm
+
+    - name: adding GPG for RVM
+      shell: gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+
+    - name: remove ruby from ubuntu
+      apt: name=ruby state=absent purge=yes
 
     - name: add java repo keys
       apt_key: keyserver=keyserver.ubuntu.com id=EEA14886 state=present
@@ -20,20 +24,17 @@
     - name: install java 8
       apt: name=oracle-java8-installer update_cache=yes state=present
 
-    - name: install vim
-      apt: name=vim state=present
+    - name: install apt packages
+      apt: name="{{ item }}" state=present
+      with_items:
+        - vim
+        - npm
+        - screen
+        - python-pip
+        - unzip
+        - mysql-client
+        - make
 
-    - name: install npm
-      apt: name=npm state=present
-
-    - name: install tmux
-      apt: name=tmux state=present
-
-    - name: install pip
-      apt: name=python-pip state=present
-
-    - name: install unzip
-      apt: name=unzip state=present
     - name: download maven
       get_url: url=http://ftp.unicamp.br/pub/apache/maven/maven-3/3.2.1/binaries/apache-maven-3.2.1-bin.tar.gz dest=/opt/
 
@@ -46,39 +47,18 @@
     - name: symlink maven bin
       file: src=/opt/maven/bin/mvn dest=/usr/bin/mvn state=link
 
-    - name: install mysql client
-      apt: name=mysql-client state=present
-
     - name: add mysql client config
       template: src=templates/my.cnf dest=/etc/my.cnf owner=root group=root mode=644
 
-    - name: install aws tools
-      pip: name=awscli state=present
+- hosts: all
+  sudo: no
+  user: vagrant
+  tasks:
 
-    - name: download eb tool
-      get_url: url=https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-2.6.3.zip dest=/opt/
+    - name: install rvm
+      shell: curl -L https://get.rvm.io | bash -s stable creates=~/.rvm
 
-    - name: unarchive eb tool
-      unarchive: src=/opt/AWS-ElasticBeanstalk-CLI-2.6.3.zip dest=/opt/ copy=no creates=/opt/AWS-ElasticBeanstalk-CLI-2.6.3
+    - name: install foreman
+      gem: name=foreman state=latest executable=/opt/vagrant_ruby/bin/gem
 
-    - name: symlink eb dir
-      file: src=/opt/AWS-ElasticBeanstalk-CLI-2.6.3 dest=/opt/eb state=link
-
-    - name: symlink eb tool
-      file: src=/opt/eb/eb/linux/python2.7/eb dest=/usr/bin/eb state=link
-
-    - name: install phantomjs dependencies
-      apt: name=libfontconfig state=present
-
-    - name: download phantomjs
-      get_url: url=https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 dest=/opt/ sha256sum=473b19f7eacc922bc1de21b71d907f182251dd4784cb982b9028899e91dcb01a
-
-    - name: unarchive phantomjs
-      unarchive: src=/opt/phantomjs-1.9.7-linux-x86_64.tar.bz2 dest=/opt/ copy=no
-
-    - name: symlink phantomjs dir
-      file: src=/opt/phantomjs-1.9.7-linux-x86_64 dest=/opt/phantomjs state=link
-
-    - name: symlink phantomjs
-      file: src=/opt/phantomjs/bin/phantomjs dest=/usr/bin/phantomjs state=link
 
